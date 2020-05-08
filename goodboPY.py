@@ -14,7 +14,6 @@ versionselecting = 0
 decktemp = []
 valid = "placeholder"
 valuethingy = "placeholder"
-#TEST TO SEE IF COMMIT WORKS
 def clear():
     print('\n' * 100)
 def createdecks(decks,version):
@@ -83,6 +82,16 @@ def valuefind(x):
         return(20)
     else:
         return(int(x[0]))
+def wildcheck(pile):
+    wildhold = pile[0]
+    playpiles[pile].remove(wildhold)
+    if not (pile):
+        pilevalue = 1
+    elif valuefind(pile[0]) == 20:
+        wildcheck(pile)
+    else:
+        valuereturned = valuefind(pile[0])
+        playpiles[pile].insert(0, wildhold)
 def checkifvalid(card, mode):
     global value
     global valid
@@ -95,6 +104,8 @@ def checkifvalid(card, mode):
             if p:
                 pilevalue = valuefind(p[0])
                 print(pilevalue)
+                if pilevalue == 20:
+                    pilevalue = wildcheck(p)
                 if cardvalue == pilevalue + 1:
                     valid = 1
                     validpile = p
@@ -176,11 +187,12 @@ def playstuff(p):
                         player.remove(player[0])
                         display(p)
         elif move == "discard" or move == "d":
+            #TODO: Discard goes into discard pile list, not in a pile; also goes into player + 1's discard set
             carddis = input("Please type the name of the card in your hand that you would like to discard.")
             for c in playerplaycards[p]:
                 print("172 c" + str(c))
                 if c == carddis:
-                    checkifvalid(carddis, discard)
+                    checkifvalid(carddis, 'discard')
                     if valid == 1:
                         print("179 valid")
                         playerplaycards[p].remove(c)
