@@ -83,15 +83,18 @@ def valuefind(x):
     else:
         return(int(x[0]))
 def wildcheck(pile):
-    wildhold = pile[0]
-    playpiles[pile].remove(wildhold)
+    global wilditerable
+    global playpiles
+    wildholding = []
+    wildholding.append(pile[-0]) #TODO: COMPLETE WILDCHECK
+    playpiles[pile].pop(0)
     if not (pile):
         pilevalue = 1
     elif valuefind(pile[0]) == 20:
         wildcheck(pile)
     else:
         valuereturned = valuefind(pile[0])
-        playpiles[pile].insert(0, wildhold)
+        playpiles[pile].insert(0, wildholding)
 def checkifvalid(card, mode):
     global value
     global valid
@@ -124,18 +127,21 @@ def checkifvalid(card, mode):
                 else:
                     valid = 0
     elif mode == "discard":
-        for p in playerdiscards:
-            try:
-                pilevalue = valuefind(p[0])
-                if cardvalue == pilevalue:
+        for g in playerdiscards:
+            for p in g:
+                try:
+                    pilevalue = valuefind(p[0])
+                    if pilevalue == 20:
+                        wildcheck(p)
+                    if cardvalue == pilevalue:
+                        valid = 1
+                        validpile = p
+                    elif cardvalue == 20:
+                        valid = 1
+                        validpile = p
+                except:
                     valid = 1
                     validpile = p
-                elif cardvalue == 20:
-                    valid = 1
-                    validpile = p
-            except:
-                valid = 1
-                validpile = p
     else:
         print("mode not specified; checkifvalid")
 def playstuff(p):
