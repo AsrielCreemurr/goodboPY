@@ -14,7 +14,7 @@ versionselecting = 0
 decktemp = []
 valid = "placeholder"
 valuethingy = "placeholder"
-
+#TEST TO SEE IF COMMIT WORKS
 def clear():
     print('\n' * 100)
 def createdecks(decks,version):
