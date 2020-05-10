@@ -4,16 +4,11 @@ onedeck = ["acedde1","2dde1","3dde1","4dde1","5dde1","6dde1","7dde1","8dde1","9d
 onedeckclassic = onedeck.copy()
 onedeckclassic.append("joker1de1")
 onedeckclassic.append("joker2de1")
-#twodecks = ["aced1","2d1","3d1","4d1","5d1","6d1","7d1","8d1","9d1","tend1","jackd1","queend1","kingd1","aces1","2s1","3s1","4s1","5s1","6s1","7s1","8s1","9s1","tens1","jacks1","queens1","kings1","aceh1","2h1","3h1","4h1","5h1","6h1","7h1","8h1","9h1","tenh1","jackh1","queenh1","kingh1","acec1","2c1","3c1","4c1","5c1","6c1","7c1","8c1","9c1","tenc1","jackc1","queenc1","kingc1","aced2","2d2","3d2","4d2","5d2","6d2","7d2","8d2","9d2","tend2","jackd2","queend2","kingd2","aces2","2s2","3s2","4s2","5s2","6s2","7s2","8s2","9s2","tens2","jacks2","queens2","kings2","aceh2","2h2","3h2","4h2","5h2","6h2","7h2","8h2","9h2","tenh2","jackh2","queenh2","kingh2","acec2","2c2","3c2","4c2","5c2","6c2","7c2","8c2","9c2","tenc2","jackc2","queenc2","kingc2"]
-#Twodecks= all of the cards in play WITHOUT INCLUDING JOKERS, used as constant; twodecksused= twodecks in play, shuffled and used
-#twodecksclassic = twodecks
-#twodecksclassic.append("joker1")
-#twodecksclassic.append("joker2")
 versionselecting = 0
-#twodecksclassic= p much what grandma had us do; two decks, joker in each
 decktemp = []
 valid = "placeholder"
 valuethingy = "placeholder"
+#TODO: ADD COMMENTS, REMOVE JUNK/DEBUGGING STUFF
 def clear():
     print('\n' * 100)
 def createdecks(decks,version):
