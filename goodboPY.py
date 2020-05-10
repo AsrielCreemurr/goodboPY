@@ -77,21 +77,31 @@ def valuefind(x):
         return(20)
     else:
         return(int(x[0]))
-def wildcheck(pile):
+def wildcheck(pile,mode):
     global wilditerable
     global playpiles
-    wildholding = []
-    wildholding.append(pile[-0]) #TODO: COMPLETE WILDCHECK
-    playpiles[pile].pop(0)
-    if not (pile):
-        pilevalue = 1
-    elif valuefind(pile[0]) == 20:
-        wildcheck(pile)
-    else:
-        valuereturned = valuefind(pile[0])
-        playpiles[pile].insert(0, wildholding)
+    if mode == "m":
+        wildcount = 0
+        pile = pile.reverse()
+        try:
+            for n in pile:
+                if valuefind(n) != 20:
+                    lastgoodvalue = valuefind(n)
+                    wildcount = 0
+                elif valuefind(n) == 20:
+                    wildcount = wildcount + 1
+        except:
+            #ran into error where 'nonetype' not iterable, perhaps this will solve it??
+            lastgoodvalue = 0
+        pile = pile.reverse()
+        return (lastgoodvalue + wildcount)
+    elif mode == 'd':
+        for c in pile:
+            if valuefind(c) != 20:
+                returnedvalue = valuefind(c)
+        return(returnedvalue)
 def checkifvalid(card, mode):
-    global value
+    global value #TODO: ADD A WAY FOR PLAYER TO SPECIFY WHERE TO PLACE WILDCARD
     global valid
     global validpile
     print('finding cardvalue')
@@ -103,7 +113,7 @@ def checkifvalid(card, mode):
                 pilevalue = valuefind(p[0])
                 print(pilevalue)
                 if pilevalue == 20:
-                    pilevalue = wildcheck(p)
+                    pilevalue = wildcheck(p,'m')
                 if cardvalue == pilevalue + 1:
                     valid = 1
                     validpile = p
@@ -127,7 +137,7 @@ def checkifvalid(card, mode):
                 try:
                     pilevalue = valuefind(p[0])
                     if pilevalue == 20:
-                        wildcheck(p)
+                        pilevalue = wildcheck(p,'d')
                     if cardvalue == pilevalue:
                         valid = 1
                         validpile = p
@@ -188,7 +198,7 @@ def playstuff(p):
                         player.remove(player[0])
                         display(p)
         elif move == "discard" or move == "d":
-            #TODO: Discard goes into discard pile list, not in a pile; also goes into player + 1's discard set
+            #TODO: Discard goes into last players's discard set??
             carddis = input("Please type the name of the card in your hand that you would like to discard.")
             for c in playerplaycards[p]:
                 print("172 c" + str(c))
