@@ -132,21 +132,21 @@ def checkifvalid(card, mode):
                 else:
                     valid = 0
     elif mode == "discard":
-        for g in playerdiscards:
-            for p in g:
-                try:
-                    pilevalue = valuefind(p[0])
-                    if pilevalue == 20:
-                        pilevalue = wildcheck(p,'d')
-                    if cardvalue == pilevalue:
-                        valid = 1
-                        validpile = p
-                    elif cardvalue == 20:
-                        valid = 1
-                        validpile = p
-                except:
+        for g in playerdiscards[playerplaying]:
+            try:
+                pilevalue = valuefind(g[0])
+                if pilevalue == 20:
+                    pilevalue = wildcheck(g, 'd')
+                if cardvalue == pilevalue:
                     valid = 1
-                    validpile = p
+                    validpile = g
+                elif cardvalue == 20:
+                    valid = 1
+                    validpile = g
+            except:
+                valid = 1
+                validpile = g
+
     else:
         print("mode not specified; checkifvalid")
 def playstuff(p):
@@ -198,7 +198,7 @@ def playstuff(p):
                         player.remove(player[0])
                         display(p)
         elif move == "discard" or move == "d":
-            #TODO: Discard goes into last players's discard set??
+            #TODO: Discard goes into last players's discard set WHEN ALL DISCARD PILES FULL
             carddis = input("Please type the name of the card in your hand that you would like to discard.")
             for c in playerplaycards[p]:
                 print("172 c" + str(c))
@@ -223,6 +223,7 @@ def main():
     global playerplaycards
     global playpiles
     global intpcount
+    global playerplaying
     versionselecting = 1
     while versionselecting: #LOOP TO DETERMINE RULESET IN PLAY
         versionselecting = 0
@@ -302,6 +303,7 @@ def main():
         gameinsession = 1
         while gameinsession == 1:
             for p in range(intpcount):
+                playerplaying = p
                 populateplayhand(p)
                 input("Press enter to continue; the following screen for " + str(p + 1) + "'s eyes only!")
                 playstuff(p)
