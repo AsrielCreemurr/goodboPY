@@ -51,6 +51,8 @@ def display(p):
     print("Topmost cards of all playpiles:")
     for d in playpiles:
         try:
+            if valuefind(d[0]) == 20:
+                print(d[0] + "(value = " + wildcheck(d,'m'))
             print(d[0])
         except:
             print("Empty pile")
@@ -81,71 +83,122 @@ def wildcheck(pile,mode):
     global wilditerable
     global playpiles
     if mode == "m":
-        wildcount = 0
-        pile = pile.reverse()
-        try:
-            for n in pile:
-                if valuefind(n) != 20:
-                    lastgoodvalue = valuefind(n)
-                    wildcount = 0
-                elif valuefind(n) == 20:
-                    wildcount = wildcount + 1
-        except:
-            #ran into error where 'nonetype' not iterable, perhaps this will solve it??
-            lastgoodvalue = 0
-        pile = pile.reverse()
-        return (lastgoodvalue + wildcount)
+        return(pile.len())
     elif mode == 'd':
-        for c in pile:
-            if valuefind(c) != 20:
-                returnedvalue = valuefind(c)
+        goodgoopie = 0
+        while goodgoopie == 0:
+            for c in pile:
+                if valuefind(c) != 20:
+                    returnedvalue = valuefind(c)
+                    goodgoopie = 1
         return(returnedvalue)
+def tuckstuff():
+    global playerplaycards
+    global playergoals
+    tuckedcard = input("What card out of your hand would you like to tuck to the bottom of your goal pile??")
+    for c in playerplaycards[playerplaying]:
+        if c == tuckedcard: #TODO: CHECK IF WORKS, CHECK LIST METHS IF DOESNT
+            playergoals[playerplaying].append(c)
+            playerplaycards[playerplaying].remove(c)
 def checkifvalid(card, mode):
-    global value #TODO: ADD A WAY FOR PLAYER TO SPECIFY WHERE TO PLACE WILDCARD
+    global value
     global valid
     global validpile
-    print('finding cardvalue')
     cardvalue = valuefind(card)
-    print('cardvalue = ' + str(cardvalue))
     if mode == "move":
-        for p in playpiles:
-            if p:
-                pilevalue = valuefind(p[0])
-                print(pilevalue)
-                if pilevalue == 20:
-                    pilevalue = wildcheck(p,'m')
-                if cardvalue == pilevalue + 1:
-                    valid = 1
-                    validpile = p
-                elif cardvalue == 20:
-                    valid = 1
-                    validpile = p
-                else:
-                    valid = 0
-            elif not p:
-                if cardvalue == 1:
-                    valid = 1
-                    validpile = p
-                elif cardvalue == 20:
-                    valid = 1
-                    validpile = p
-                else:
-                    valid = 0
+        manualstate = input("Would you like to manually place your card? (Y or N)")
+        if manualstate.lower() == "y":
+            attemptedpile = input("Type the top card of the pile you would like to manipulate")
+            for p in playpiles:
+                if p[0] == attemptedpile:
+                    pilevalue = valuefind(p[0])
+                    if pilevalue == 20:
+                        pilevalue = wildcheck(p, 'm')
+                    if cardvalue == pilevalue + 1:
+                        valid = 1
+                        validpile = p
+                    elif cardvalue == 20:
+                        valid = 1
+                        validpile = p
+                    else:
+                        valid = 0
+        else:
+            for p in playpiles:
+                if p:
+                    pilevalue = valuefind(p[0])
+                    if pilevalue == 20:
+                        pilevalue = wildcheck(p, 'm')
+                    if cardvalue == pilevalue + 1:
+                        valid = 1
+                        validpile = p
+                    elif cardvalue == 20:
+                        valid = 1
+                        validpile = p
+                    else:
+                        valid = 0
+                elif not p:
+                    if cardvalue == 1:
+                        valid = 1
+                        validpile = p
+                    elif cardvalue == 20:
+                        valid = 1
+                        validpile = p
+                    else:
+                        valid = 0
     elif mode == "discard":
-        for g in playerdiscards[playerplaying]:
-            try:
-                pilevalue = valuefind(g[0])
-                if pilevalue == 20:
-                    pilevalue = wildcheck(g, 'd')
-                if cardvalue == pilevalue:
-                    valid = 1
-                    validpile = g
-                elif cardvalue == 20:
-                    valid = 1
-                    validpile = g
-            except:
-                valid = 1
-                validpile = g
+        manualstate = input("Would you like to manually discard your card? (Y or N)")
+        if manualstate.lower() == "y":
+            attemptedpile = input("Type the top card of the pile you would like to manipulate")
+            testiter = 0
+            for g in playerdiscards[playerplaying]: #TODO: when tuck should occur, it instead places card into last player's discard; i suspect that when it iterates, it goes past the end of the current player's discard
+                testiter = testiter + 1
+                if testiter == 5:
+                    print("Pile not found")
+                elif g == attemptedpile:
+                    try:
+                        pilevalue = valuefind(g[0])
+                        if pilevalue == 20:
+                            pilevalue = wildcheck(g, 'd')
+                        if cardvalue == pilevalue:
+                            valid = 1
+                            validpile = g
+                        elif cardvalue == 20:
+                            valid = 1
+                            validpile = g
+                        elif pilevalue == 0:
+                            valid = 1
+                            validpile = g
+                        else:
+                            print("Card can't be placed...")
+                    except:
+                        print("TUCK TIME!!!")
+                        tuckstuff()
+        else:
+            testiter = 0
+            for g in playerdiscards[playerplaying]:
+                testiter = testiter + 1
+                if testiter == 5:
+                    #idea; set it to test if any valid discards upon calling discard function; tuck if needed
+                    break
+                try:
+                    try:
+                        pilevalue = valuefind(g[0])
+                    except:
+                        pilevalue = 0
+                    if pilevalue == 20:
+                        pilevalue = wildcheck(g, 'd')
+                    if cardvalue == pilevalue:
+                        valid = 1
+                        validpile = g
+                    elif cardvalue == 20:
+                        valid = 1
+                        validpile = g
+                    elif pilevalue == 0:
+                        valid = 1
+                        validpile = g
+                except:
+                    print("TUCK TIME!!!")
+                    tuckstuff()
 
     else:
         print("mode not specified; checkifvalid")
@@ -165,54 +218,44 @@ def playstuff(p):
             cardmove = input("Please type the name of the card that you would like to move.")
             #options = [playerplaycards[p], playerdiscards, playergoals]
             for c in playerplaycards[p]:
-                print("141c " + str(c))
-                print("cardmove = " + cardmove)
                 if cardmove == c:
-                    print("143 checking")
                     checkifvalid(cardmove, 'move')
                     print(valid)
                     if valid == 1:
-                        print("145 valid")
                         playerplaycards[p].remove(c)
                         validpile.insert(0, cardmove)
             for g in playerdiscards:
-                print("148 g" + str(g))
                 for c in g:
-                    print("150 c" + str(c))
                     for l in c:
-                        print("152 l" + str(l))
                         if cardmove == l:
                             checkifvalid(cardmove, 'move')
                             if valid == 1:
-                                print("157 valid")
                                 c.remove(l)
                                 validpile.insert(0, cardmove)
                                 display(p)
             for player in playergoals:
-                print("160 player" + str(player))
                 if cardmove == player[0]:
                     checkifvalid(cardmove, 'move')
                     if valid == 1:
-                        print("165 valid")
                         validpile.insert(0, cardmove)
                         player.remove(player[0])
                         display(p)
+            if valuefind(validpile[0]) == 12:
+                print("Pile ended!")
+                for c in validpile:
+                    deck.append(c)
+                    validpile.remove(c)
         elif move == "discard" or move == "d":
-            #TODO: Discard goes into last players's discard set WHEN ALL DISCARD PILES FULL
             carddis = input("Please type the name of the card in your hand that you would like to discard.")
             for c in playerplaycards[p]:
-                print("172 c" + str(c))
                 if c == carddis:
                     checkifvalid(carddis, 'discard')
                     if valid == 1:
-                        print("179 valid")
                         playerplaycards[p].remove(c)
                         validpile.insert(0, carddis)
                         turnon = 0
                     else:
                         print("Not valid bro, that's kinda cringe ngl")
-
-
 def main():
     print("Skipbo v1 is loading")
     global deck
